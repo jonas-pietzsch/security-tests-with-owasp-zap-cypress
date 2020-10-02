@@ -22,6 +22,8 @@ jobs:
           headless: true
           config-file: cypress-local.json
           env: HTTP_PROXY=http://localhost:8080
-      - uses: wei/curl@master
+      - uses: actions/upload-artifact@v1
+        if: always()
         with:
-          args: http://localhost:8080/OTHER/core/other/jsonreport/
+          name: cypress-videos
+          path: cypress/videos
