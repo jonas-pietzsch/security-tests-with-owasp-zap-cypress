@@ -23,6 +23,7 @@ jobs:
           config-file: cypress-local.json
         env:
           NPM_CONFIG_STRICT_SSL: "false"
+          NO_PROXY: download.cypress.io
           HTTP_PROXY: http://localhost:8080
           HTTPS_PROXY: http://localhost:8080
       - uses: actions/upload-artifact@v1
