@@ -9,6 +9,10 @@ jobs:
         image: bkimminich/juice-shop
         ports:
           - 3000:3000
+      zap:
+        image: jverhoelen/owasp-zap-with-entrypoint
+        ports:
+          - 8080:8080
 
     steps:
       - uses: actions/checkout@v1
@@ -16,4 +20,6 @@ jobs:
         with:
           browser: chrome
           headless: true
-          config-file: cypress.json
+          config-file: cypress-local.json
+        env:
+          HTTP_PROXY: http://localhost:8080
