@@ -1,0 +1,27 @@
+e2e_with_security_scan:
+    image:
+        name: cypress/included:5.3.0
+        entrypoint: [""]
+    services:
+        - name: owasp/zap2docker-bare
+          alias: owasp-zap
+          command: ["zap.sh", "-daemon", "-silent", "-host", "owasp-zap", "-port", "8080", "-config", "api.addrs.addr.name=.*", "-config", "api.addrs.addr.regex=true", "-config", "api.disablekey=true"]
+        - name: bkimminich/juice-shop
+          alias: owasp-juiceshop
+    before_script:
+        - npm install
+        - mkdir reports
+    script:
+        - export HTTP_PROXY=owasp-zap:8080
+        - npm run ci
+        - sleep 5
+        - curl "http://owasp-zap:8080/OTHER/core/other/htmlreport/" > reports/main.html
+        - curl "http://owasp-zap:8080/JSON/stats/view/allSitesStats/?keyPrefix=" > reports/all-sites-stats.json
+        - curl "http://owasp-zap:8080/JSON/alert/view/alerts/?baseurl=&start=&count=&riskId=" > reports/all-alerts.json
+    artifacts:
+        paths:
+            - reports/
+            - cypress/videos/
+            - cypress/screenshots/
+        expire_in: 30 minutes
+        when: always
