@@ -22,6 +22,6 @@ jobs:
           headless: true
           config-file: cypress-local.json
           env: HTTP_PROXY=http://localhost:8080
-      - name: wei/curl@master
+      - uses: wei/curl@master
         with:
           args: http://localhost:8080/OTHER/core/other/jsonreport/
