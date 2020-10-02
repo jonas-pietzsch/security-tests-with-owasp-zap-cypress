@@ -21,7 +21,9 @@ jobs:
           browser: chrome
           headless: true
           config-file: cypress-local.json
-          env: HTTP_PROXY=http://localhost:8080
+        env:
+          HTTP_PROXY: http://localhost:8080
+          HTTPS_PROXY: http://localhost:8080
       - uses: actions/upload-artifact@v1
         if: always()
         with:
