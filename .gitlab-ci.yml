@@ -7,7 +7,7 @@ e2e_with_security_scan:
           alias: owasp-zap
           command: ["zap.sh", "-daemon", "-silent", "-host", "owasp-zap", "-port", "8080", "-config", "api.addrs.addr.name=.*", "-config", "api.addrs.addr.regex=true", "-config", "api.disablekey=true"]
         - name: bkimminich/juice-shop
-          alias: owasp-juiceshop
+          alias: juiceshop
     before_script:
         - npm install
         - mkdir reports
