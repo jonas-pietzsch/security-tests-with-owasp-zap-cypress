@@ -12,12 +12,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
+      - name: Install dependencies
+        uses: cypress-io/github-action@v2
+        with:
+          runTests: false
+      - name: Run Cypress proxied by ZAP
+        uses: cypress-io/github-action@v2
         with:
           browser: chrome
+          install: false
           headless: true
           config-file: cypress-heroku.json
-          env: HTTP_PROXY=http://localhost:8080,HTTP_PROXY=http://localhost:8080
+        env:
+          HTTP_PROXY: http://localhost:8080
+          HTTPS_PROXY: http://localhost:8080
       - name: download ZAP report
         if: always()
         run: sleep 10 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
