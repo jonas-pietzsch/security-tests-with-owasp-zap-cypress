@@ -29,7 +29,7 @@ jobs:
           HTTPS_PROXY: http://localhost:8080
       - name: download ZAP report
         if: always()
-        run: sleep 10 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
+        run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
