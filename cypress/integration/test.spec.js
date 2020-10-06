@@ -30,7 +30,7 @@ describe("OWASP juice shop", () => {
         });
     });
 
-    it("should open and close the item detail", () => {
+    it.skip("should open and close the item detail", () => {
         cy.get(".ribbon-card").first().click();
         cy.get("mat-dialog-content").should("exist");
 
