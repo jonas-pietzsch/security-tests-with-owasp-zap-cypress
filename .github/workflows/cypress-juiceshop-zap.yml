@@ -11,6 +11,8 @@ jobs:
           - 8080:8080
 
     steps:
+      - name: configure ZAP to exclude hosts of no interest
+        run: curl "http://localhost:8080/JSON/core/action/excludeFromProxy/?regex=%5E.*%28google%7Cgstatic%7Cherokucdn%7Cgetmdl%7Ccloudflare%7Ccypress%29.*"
       - uses: actions/checkout@v1
       - name: Install dependencies
         uses: cypress-io/github-action@v2
