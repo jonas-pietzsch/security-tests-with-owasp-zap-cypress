@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "cypress open --config-file cypress-local.json",
-        "ci": "cypress run --config-file cypress.json --browser chrome --headless"
+        "start": "cypress open",
+        "ci": "cypress run --browser chrome --headless"
     },
     "author": "",
     "license": "UNLICENSED",

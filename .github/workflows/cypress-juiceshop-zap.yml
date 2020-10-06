@@ -22,7 +22,6 @@ jobs:
           browser: chrome
           install: false
           headless: true
-          config-file: cypress-heroku.json
         env:
           HTTP_PROXY: http://localhost:8080
           HTTPS_PROXY: http://localhost:8080
