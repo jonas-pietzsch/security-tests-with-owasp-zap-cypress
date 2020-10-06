@@ -19,7 +19,8 @@ jobs:
           config-file: cypress-heroku.json
           env: HTTP_PROXY=http://localhost:8080,HTTP_PROXY=http://localhost:8080
       - name: download ZAP report
-        run: curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
+        if: always()
+        run: sleep 10 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
