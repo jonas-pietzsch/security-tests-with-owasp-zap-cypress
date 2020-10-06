@@ -5,10 +5,6 @@ jobs:
     runs-on: ubuntu-16.04
 
     services:
-      juiceshop:
-        image: bkimminich/juice-shop
-        ports:
-          - 3000:3000
       zap:
         image: jverhoelen/owasp-zap-with-entrypoint
         ports:
@@ -20,12 +16,8 @@ jobs:
         with:
           browser: chrome
           headless: true
-          config-file: cypress-local.json
-        env:
-          NPM_CONFIG_STRICT_SSL: "false"
-          NO_PROXY: download.cypress.io
-          HTTP_PROXY: http://localhost:8080
-          HTTPS_PROXY: http://localhost:8080
+          config-file: cypress-heroku.json
+          env: HTTP_PROXY=http://localhost:8080,HTTP_PROXY=http://localhost:8080
       - uses: actions/upload-artifact@v1
         if: always()
         with:
