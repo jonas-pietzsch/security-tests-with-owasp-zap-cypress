@@ -11,7 +11,7 @@ e2e_with_security_scan:
         - mkdir reports
     script:
         - export HTTP_PROXY=owasp-zap:8080
-        - npm run ci
+        - npm run run:remote
         - sleep 5
         - curl "http://owasp-zap:8080/OTHER/core/other/htmlreport/" > reports/main.html
         - curl "http://owasp-zap:8080/JSON/stats/view/allSitesStats/?keyPrefix=" > reports/all-sites-stats.json
