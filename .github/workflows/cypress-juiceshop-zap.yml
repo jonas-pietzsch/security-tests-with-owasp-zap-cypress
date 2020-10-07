@@ -30,8 +30,22 @@ jobs:
       - name: run OWASP ZAP active scan
         if: always()
         run: |
-          curl 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
-          sleep 120
+          curl -s 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
+          echo "Started active scan... "
+
+          attempt_counter=0
+          max_attempts=30
+
+          while [ "$(curl -s 'http://localhost:8080/JSON/ascan/view/status/?scanId=0')" != "{\"status\":\"100\"}" ]; do
+            if [ ${attempt_counter} -eq ${max_attempts} ];then
+              echo "Max attempts reached, exiting"
+              exit 1
+            fi
+
+            echo 'Scan did not complete yet'
+            attempt_counter=$(($attempt_counter+1))
+            sleep 10
+          done
       - name: download ZAP report
         if: always()
         run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
