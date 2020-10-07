@@ -9,16 +9,10 @@ jobs:
         image: jverhoelen/owasp-zap-with-entrypoint
         ports:
           - 8080:8080
-      juice-shop:
-        image: bkimminich/juice-shop:v12.1.0
-        ports:
-          - 3000:3000
 
     steps:
-      - name: add juiceshop service to etc hosts
-        run: echo "127.0.0.1 juiceshop" | sudo tee -a /etc/hosts
       - name: configure OWASP ZAP to exclude hosts of no interest
-        run: curl "http://localhost:8080/JSON/core/action/excludeFromProxy/?regex=%5E.*%28google%7Cgstatic%7Cgetmdl%7Ccloudflare%7Ccypress%29.*"
+        run: curl "http://localhost:8080/JSON/core/action/excludeFromProxy/?regex=%5E.*%28google%7Cgstatic%7Cherokucdn%7Cgetmdl%7Ccloudflare%7Ccypress%29.*"
       - uses: actions/checkout@v1
       - name: Install dependencies
         uses: cypress-io/github-action@v2
@@ -30,14 +24,13 @@ jobs:
           browser: chrome
           install: false
           headless: true
-          config-file: cypress-localhost.json
         env:
           HTTP_PROXY: http://localhost:8080
           HTTPS_PROXY: http://localhost:8080
       - name: wait for OWASP ZAP active scan to finish
         if: always()
         run: |
-          curl -s 'http://localhost:8080/JSON/ascan/action/scan/?url=http%3A%2F%2Fjuiceshop%3A3000%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
+          curl -s 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
           echo "Started OWASP ZAP active scan"
 
           attempt_counter=0
@@ -54,7 +47,7 @@ jobs:
             echo "Current active scan status: ${statusResult}"
 
             attempt_counter=$(($attempt_counter+1))
-            sleep 5
+            sleep 3
 
             [[ "$statusResult" != "{\"status\":\"100\"}" ]]
           do true; done
@@ -62,7 +55,7 @@ jobs:
           echo "Finished scan"
       - name: download OWASP ZAP report
         if: always()
-        run: curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
+        run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
