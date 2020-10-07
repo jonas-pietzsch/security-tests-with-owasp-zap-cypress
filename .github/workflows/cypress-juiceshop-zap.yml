@@ -27,6 +27,11 @@ jobs:
         env:
           HTTP_PROXY: http://localhost:8080
           HTTPS_PROXY: http://localhost:8080
+      - name: run OWASP ZAP active scan
+        if: always()
+        run: |
+          curl 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
+          sleep 120
       - name: download ZAP report
         if: always()
         run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html

