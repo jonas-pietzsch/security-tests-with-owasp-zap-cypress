@@ -9,6 +9,10 @@ jobs:
         image: jverhoelen/owasp-zap-with-entrypoint
         ports:
           - 8080:8080
+      juice-shop:
+        image: bkimminich/juice-shop:v12.1.0
+        ports:
+          - 3000:3000
 
     steps:
       - name: configure OWASP ZAP to exclude hosts of no interest
@@ -24,6 +28,7 @@ jobs:
           browser: chrome
           install: false
           headless: true
+          config-file: cypress-localhost.json
         env:
           HTTP_PROXY: http://localhost:8080
           HTTPS_PROXY: http://localhost:8080
@@ -47,7 +52,7 @@ jobs:
             echo "Current active scan status: ${statusResult}"
 
             attempt_counter=$(($attempt_counter+1))
-            sleep 3
+            sleep 5
 
             [[ "$statusResult" != "{\"status\":\"100\"}" ]]
           do true; done
@@ -55,7 +60,7 @@ jobs:
           echo "Finished scan"
       - name: download OWASP ZAP report
         if: always()
-        run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
+        run: curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
       - uses: actions/upload-artifact@v1
         if: failure()
         with:
