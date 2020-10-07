@@ -1,3 +1,4 @@
+# DevSecOps: Testing Web Apps w/ Cypress & OWASP ZAP
 
 1. [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) is an intentionally insecure web application for training and education purposes.
 2. [OWASP ZAP](https://www.zaproxy.org/) is web app security scanner. It gathers traffic using a proxy, further explore, passive and active scan web applications for potential vulnerabilities.
