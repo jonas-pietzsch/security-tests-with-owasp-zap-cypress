@@ -14,10 +14,6 @@ jobs:
       - name: configure OWASP ZAP to exclude hosts of no interest
         run: curl "http://localhost:8080/JSON/core/action/excludeFromProxy/?regex=%5E.*%28google%7Cgstatic%7Cherokucdn%7Cgetmdl%7Ccloudflare%7Ccypress%29.*"
       - uses: actions/checkout@v1
-      - name: start OWASP ZAP active scan
-        run: |
-          curl -s 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
-          echo "Started OWASP ZAP active scan"
       - name: Install dependencies
         uses: cypress-io/github-action@v2
         with:
@@ -34,19 +30,29 @@ jobs:
       - name: wait for OWASP ZAP active scan to finish
         if: always()
         run: |
-          attempt_counter=0
-          max_attempts=30
+          curl -s 'http://localhost:8080/JSON/ascan/action/scan/?url=https%3A%2F%2Fjuice-shop.herokuapp.com%2F&recurse=true&inScopeOnly=false&scanPolicyName=&method=&postData=&contextId='
+          echo "Started OWASP ZAP active scan"
 
-          while [ "$(curl -s 'http://localhost:8080/JSON/ascan/view/status/?scanId=0')" != "{\"status\":\"100\"}" ]; do
+          attempt_counter=0
+          max_attempts=100
+          statusResult=""
+
+          while
             if [ ${attempt_counter} -eq ${max_attempts} ];then
-              echo "Max attempts reached, exiting with successful exit code although OWASP ZAP active scan did not finish in time"
+              echo "Max attempts reached, exiting with exit code 0 although OWASP ZAP active scan did not finish in time"
               exit 0
             fi
 
-            echo 'Active OWASP ZAP scan did not complete yet'
+            statusResult="$(curl -s 'http://localhost:8080/JSON/ascan/view/status/?scanId=0')"
+            echo "Current active scan status: ${statusResult}"
+
             attempt_counter=$(($attempt_counter+1))
-            sleep 20
-          done
+            sleep 3
+
+            [[ "$statusResult" != "{\"status\":\"100\"}" ]]
+          do true; done
+
+          echo "Finished scan"
       - name: download OWASP ZAP report
         if: always()
         run: sleep 20 && curl "http://localhost:8080/OTHER/core/other/htmlreport/" > zap-report.html
@@ -56,7 +62,7 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
       - uses: actions/upload-artifact@v1
-        if: always()
+        if: failure()
         with:
           name: cypress-videos
           path: cypress/videos
