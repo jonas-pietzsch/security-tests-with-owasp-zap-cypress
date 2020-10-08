@@ -1,11 +1,11 @@
 # DevSecOps: Testing Web Apps w/ Cypress & OWASP ZAP
 
-1. [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) is an intentionally insecure web application for training and education purposes.
+1. [Cypress](https://www.cypress.io) is an UI/E2E testing framework for web applications. You know Selenium? Cypress is more awesome in every aspect. [See why in an article by me](https://blog.codecentric.de/en/2020/10/cypress-ui-end2end-testing/)
 2. [OWASP ZAP](https://www.zaproxy.org/) is web app security scanner. It gathers traffic using a proxy, further explore, passive and active scan web applications for potential vulnerabilities.
-3. [Cypress](https://www.cypress.io) is an UI/E2E testing framework for web applications. You know Selenium? Cypress is more awesome in every aspect. [See why in an article by me](https://blog.codecentric.de/en/2020/10/cypress-ui-end2end-testing/)
+3. [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/) is an intentionally insecure web application for training and education purposes.
 
-## The Why and How
-### Combining two great tools for a higher goal
+## Why and How?
+### Combining two great tools for a greater goal
 
 These tools can be combined in an interesting way. **Cypress** can proxy all of its traffic generated during test execution through **OWASP ZAP**. ZAP will roughly learn which sites the web app under test has. It gathers security alerts found in the traffic. Afterwards ZAP can run active scans against the application in addition. These try some active attacks against the site, such as SQL injections or Cross-Site-Scripting attempts. OWASP ZAP afterwards provides reports including all found vulnerabilities.
 
@@ -44,8 +44,8 @@ npm run remote:zap-active-scan
 
 ### Locally against dockerized Juice Shop
 
-Unfortunately this is hard to achieve since Cypress is limited to proxy traffic **not from localhost**. Juice Shop is nicely dockerized an can be started easily (`docker run -p 3000:3000 bkimminich/juice-shop`). However, it is then available on `localhost:3000`. Cypress test traffic will therefor not be proxied through ZAP. Also the approach of adding a line such as `127.0.0.1     juiceshop` to `/etc/hosts` does not work as dockerized ZAP is not able to access the Juice Shop via a host entry from within Docker.
+Unfortunately this is hard to achieve since Cypress is limited to proxy traffic **not from localhost**. Juice Shop is nicely dockerized and can be started easily (`docker run -p 3000:3000 bkimminich/juice-shop`). However, it is then available on `localhost:3000`. Cypress test traffic will therefor not be proxied through ZAP. Also the approach of adding a line such as `127.0.0.1     juiceshop` to `/etc/hosts` does not work as dockerized ZAP is not able to access the Juice Shop via a host entry from within Docker.
 
 This is also a problem in CI environments when trying to run Juice Shop as a "service" (Gitlab CI and Github actions offer this feature). Services in most CI systems are exposed via `localhost` or a host entry which is then not proxyable by Cypress or not accessible via host entry by ZAP. That's the reason for targeting a hosted variant on the internet.
 
-If you've got a running solution to run all involed applications locally or in CI, feel free to contribute or hit me up :-)
+If you've got a solution to run all involed applications locally or in CI while allowing the tested web app traffic to be proxied, feel free to contribute or hit me up :-)
